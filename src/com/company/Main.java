@@ -1,39 +1,43 @@
 package com.company;
 
+import com.company.model.Cliente;
+import com.company.model.Factura;
+import com.company.model.Item;
+import com.company.repository.ClienteRepository;
+
+import java.math.BigDecimal;
 import java.util.*;
 
 public class Main {
-    private static List<Cliente> clientes;
+    private static ClienteRepository<Cliente> clienteRepository;
+    private static List<Item> items;
     public static void main(String[] args) {
-        ///
-        clientes = new ArrayList<Cliente>(Arrays.asList(
-           new Cliente("123","Cristiano","Ronaldo"),
-           new Cliente("456","Lionel","Messi"),
-           new Cliente("789","Erling","Haaland")
-        ));
 
-        ///
-        clientes.forEach(System.out::println);
+        /////    PARTE 2   /////////
+        inicializarDatos();
 
-        ///
-        clientes.remove(0);
+        Cliente cliente = new Cliente("123", "Cristiano", "Ronaldo");
+        validarCliente(cliente);
 
-        ///
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Por favor ingrese un numero de DNI:");
+        Factura factura = new Factura(cliente, items);
 
-        String dni = scanner.next();
+        System.out.println("Total factura: "+factura.getTotalVenta());
 
-        buscarCliente(dni);
     }
 
-    public static void buscarCliente(String dni){
-        Optional<Cliente> cliente =  clientes.stream().filter(x -> x.getDni().equalsIgnoreCase(dni)).findFirst();
+    public static void inicializarDatos(){
+        clienteRepository =  new ClienteRepository<>();
 
-        if(cliente.isPresent()){
-            System.out.println(cliente.get());
-        }else {
-            System.out.println("Cliente no se encuentra en el sistema");
+        items = new ArrayList<>(Arrays.asList(
+                new Item("ABC", "PAPEL", 1, new BigDecimal("2.0")),
+                new Item("DEF", "JUGO", 2, new BigDecimal("2.0"))
+        ));
+    }
+
+    public static void validarCliente(Cliente cliente){
+        if(clienteRepository.findById(cliente.getDni()).isEmpty()){
+            clienteRepository.add(cliente);
         }
     }
+
 }

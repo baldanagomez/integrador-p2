@@ -1,4 +1,4 @@
-package com.company;
+package com.company.model;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -7,13 +7,24 @@ import java.util.List;
 public class Factura {
 
     private Cliente cliente;
-    private List<Item> items = new ArrayList<Item>();
-    private BigDecimal totalVenta = new BigDecimal(0);
+    private List<Item> items;
+    private BigDecimal totalVenta = new BigDecimal("0.0");
 
-    public Factura(Cliente cliente, List<Item> items, BigDecimal totalVenta) {
+    public Factura(Cliente cliente, List<Item> items) {
+        calcularTotal(items);
         this.cliente = cliente;
         this.items = items;
-        this.totalVenta = totalVenta;
+
+    }
+
+    public void calcularTotal(List<Item> items){
+        for (Item item: items) {
+            this.totalVenta = this.totalVenta.add(
+                    item.getCostoUnitario()
+                            .multiply(
+                                    BigDecimal.valueOf(
+                                            item.getCantidadComprada())));
+        }
     }
 
     public Cliente getCliente() {
